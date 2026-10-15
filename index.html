@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>PLC제어 기본 입과안내</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #1a56db;
+  --primary-light: #3b82f6;
+  --primary-dark: #1e3a8a;
+  --accent: #06b6d4;
+  --accent-warm: #f59e0b;
+  --bg: #f0f4f8;
+  --card: #ffffff;
+  --text: #1e293b;
+  --text-sec: #64748b;
+  --border: #e2e8f0;
+  --radius: 10px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', 'Noto Sans KR', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+
+.container {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+/* ── Hero ── */
+.hero {
+  position: relative;
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 40%, #1a56db 100%);
+  color: #fff;
+  padding: 24px 16px 20px;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -30%; right: -15%;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(6,182,212,.2) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-block;
+  background: rgba(6,182,212,.2);
+  border: 1px solid rgba(6,182,212,.4);
+  color: #67e8f9;
+  font-size: .65rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+.hero-title {
+  font-size: 1.3rem;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  line-height: 1.25;
+  position: relative;
+  z-index: 1;
+}
+.hero-title span { color: var(--accent); }
+.hero-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 12px;
+  position: relative;
+  z-index: 1;
+}
+.hero-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .72rem;
+  color: rgba(255,255,255,.85);
+}
+.hero-meta-item svg {
+  width: 13px; height: 13px;
+  fill: var(--accent);
+  flex-shrink: 0;
+}
+
+/* ── Notice ── */
+.notice {
+  background: linear-gradient(90deg, #fef3c7, #fde68a);
+  border-left: 3px solid var(--accent-warm);
+  padding: 8px 10px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  margin-top: 10px;
+  font-size: .72rem;
+  color: #92400e;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  line-height: 1.5;
+}
+.notice svg {
+  width: 14px; height: 14px;
+  fill: #d97706;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ── Tab Nav (horizontal scroll) ── */
+.tab-nav {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+.tab-nav::-webkit-scrollbar { display: none; }
+.tab-btn {
+  flex-shrink: 0;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  color: var(--text-sec);
+  padding: 7px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: .72rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all .2s ease;
+  white-space: nowrap;
+}
+.tab-btn:hover {
+  border-color: var(--primary-light);
+  color: var(--primary);
+}
+.tab-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+.tab-btn svg {
+  width: 13px; height: 13px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+/* ── Tab Content ── */
+.tab-content {
+  display: none;
+  animation: fadeSlide .3s ease;
+}
+.tab-content.active { display: block; }
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Card ── */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  margin-top: 10px;
+  padding: 14px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  border-left: 3px solid var(--primary);
+  padding-left: 8px;
+  margin-bottom: 10px;
+}
+
+/* ── Pre-check ── */
+.pre-check-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pre-check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  background: linear-gradient(135deg, #f0f9ff, #eff6ff);
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+}
+.pre-check-icon {
+  width: 30px; height: 30px;
+  background: var(--primary);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.pre-check-icon svg {
+  width: 16px; height: 16px;
+  fill: #fff;
+}
+.pre-check-body { flex: 1; }
+.pre-check-label {
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+}
+.pre-check-desc {
+  font-size: .7rem;
+  color: var(--text-sec);
+  margin-top: 1px;
+}
+.pre-check-action { margin-top: 6px; }
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-family: inherit;
+  font-size: .72rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn-action svg {
+  width: 12px; height: 12px;
+  fill: currentColor;
+}
+.app-steps {
+  margin-top: 6px;
+  font-size: .72rem;
+  color: var(--text);
+  line-height: 1.8;
+  padding-left: 2px;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+.app-name {
+  display: inline;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ── Overview ── */
+.overview-list { list-style: none; }
+.overview-list li {
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 6px;
+}
+.overview-list li:last-child { border-bottom: none; }
+.overview-label {
+  font-weight: 700;
+  color: var(--primary);
+  min-width: 60px;
+  flex-shrink: 0;
+  font-size: .78rem;
+}
+.overview-value {
+  color: var(--text);
+  font-size: .78rem;
+}
+.overview-value .sub-note {
+  display: block;
+  font-size: .68rem;
+  color: var(--text-sec);
+  margin-top: 1px;
+}
+
+/* ── Goal Cards ── */
+.goal-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+.goal-card {
+  background: linear-gradient(135deg, #eff6ff, #f0f9ff);
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 10px 12px;
+  position: relative;
+  overflow: hidden;
+}
+.goal-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: var(--primary);
+}
+.goal-num {
+  font-size: .62rem;
+  font-weight: 600;
+  color: var(--primary);
+  background: #dbeafe;
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-bottom: 3px;
+}
+.goal-text {
+  font-size: .78rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* ── Schedule (Mobile: stacked day cards) ── */
+.schedule-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.day-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.day-header {
+  background: var(--primary);
+  color: #fff;
+  padding: 7px 12px;
+  font-size: .78rem;
+  font-weight: 600;
+}
+.day-header .day-note {
+  font-size: .62rem;
+  font-weight: 400;
+  opacity: .85;
+  margin-left: 4px;
+}
+.day-body { padding: 0; }
+.time-block {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+.time-block:last-child { border-bottom: none; }
+.time-label {
+  width: 82px;
+  flex-shrink: 0;
+  background: #f8fafc;
+  color: var(--primary-dark);
+  font-size: .64rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8px 4px;
+  border-right: 1px solid var(--border);
+  line-height: 1.4;
+}
+.time-label.lunch {
+  background: #fefce8;
+  color: var(--text-sec);
+}
+.time-label.exam {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+.time-topics {
+  flex: 1;
+  padding: 8px 10px;
+}
+.time-topics .topic {
+  display: block;
+  font-size: .72rem;
+  color: var(--text);
+  line-height: 1.6;
+  position: relative;
+  padding-left: 10px;
+}
+.time-topics .topic::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 7px;
+  width: 4px; height: 4px;
+  background: var(--primary-light);
+  border-radius: 50%;
+}
+.lunch-text {
+  font-size: .68rem;
+  color: var(--text-sec);
+  text-align: center;
+  padding: 6px;
+  background: #fefce8;
+}
+
+/* ── Attendance ── */
+.att-block-title {
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.att-block-title .tag {
+  font-size: .62rem;
+  font-weight: 600;
+  background: #dbeafe;
+  color: var(--primary);
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+.att-list {
+  list-style: none;
+  margin-left: 2px;
+}
+.att-list li {
+  position: relative;
+  padding: 3px 0 3px 14px;
+  font-size: .76rem;
+  color: var(--text);
+  line-height: 1.6;
+}
+.att-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--primary);
+  font-weight: 700;
+  font-size: .72rem;
+}
+.att-list li .highlight {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+/* ── Attendance Table ── */
+.att-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-size: .66rem;
+  table-layout: fixed;
+}
+.att-table th, .att-table td {
+  border: 1px solid var(--border);
+  padding: 5px 6px;
+  text-align: left;
+  vertical-align: top;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+.att-table th {
+  background: #eff6ff;
+  color: var(--primary-dark);
+  font-weight: 600;
+  width: 28%;
+}
+.att-table td .sub {
+  display: block;
+  font-size: .6rem;
+  color: var(--text-sec);
+  margin-top: 2px;
+}
+
+/* ── Footer ── */
+.footer {
+  text-align: center;
+  margin-top: 16px;
+  padding: 10px;
+  font-size: .65rem;
+  color: var(--text-sec);
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <!-- ═══ Hero ═══ -->
+  <header class="hero">
+    <div class="hero-badge">📋 입과안내</div>
+    <h1 class="hero-title">PLC제어 기본</h1>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11z"/></svg>
+        10/21(수) ~ 23(금)
+      </div>
+      <div class="hero-meta-item">
+        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/></svg>
+        수원사업장 C3건물 101호 교육장
+      </div>
+      <div class="hero-meta-item">
+        <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+        08:00 ~ 17:00 (1일차 09:00 시작)
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ Notice ═══ -->
+  <div class="notice">
+    <svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+    <span>입과안내문 필히 숙지하시어 준비 부탁드립니다</span>
+  </div>
+
+  <!-- ═══ Tab Navigation ═══ -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-target="pre">
+      <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      사전 준비
+    </button>
+    <button class="tab-btn" data-target="overview">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+      교육 개요
+    </button>
+    <button class="tab-btn" data-target="schedule">
+      <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>
+      일정표
+    </button>
+    <button class="tab-btn" data-target="attendance">
+      <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm0 4a3.5 3.5 0 110 7 3.5 3.5 0 010-7z"/></svg>
+      근태 안내
+    </button>
+  </nav>
+
+  <!-- ═══ Content Area ═══ -->
+  <main>
+
+    <!-- 0️⃣ 사전 필수 준비사항 -->
+    <section id="pre" class="tab-content active card">
+      <h2 class="section-title">사전 필수 준비사항</h2>
+      <ul class="pre-check-list">
+        <li class="pre-check-item">
+          <div class="pre-check-icon">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 2l5 5h-5V4zM6 20V4h5v7h7v9H6zm2-6h8v2H8v-2zm0 4h5v2H8v-2zm0-8h3v2H8v-2z"/></svg>
+          </div>
+          <div class="pre-check-body">
+            <div class="pre-check-label">과정 입과동의서 서약</div>
+            <div class="pre-check-desc">교육 플랫폼에서 입과동의서 작성이 필요합니다.</div>
+            <div class="pre-check-action">
+              <a href="https://platform.samsungcic.com/#/course/CRS20260211267876588" class="btn-action" target="_blank">
+                <svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+                동의서 작성하기
+              </a>
+            </div>
+          </div>
+        </li>
+        <li class="pre-check-item">
+          <div class="pre-check-icon">
+            <svg viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14zm-4.2-5.78v1.75l3.2-2.99L12.8 9v1.7c-3.11.43-4.35 2.56-4.8 4.7 1.11-1.55 2.59-2.18 4.8-2.18z"/></svg>
+          </div>
+          <div class="pre-check-body">
+            <div class="pre-check-label">노동부 앱 사전설치</div>
+            <div class="pre-check-desc">본인인증이 필수이므로 사전에 아래 순서에 따라 완료해 주세요.</div>
+            <div class="app-steps">
+              ① <span class="app-name">'고용24 출결관리'</span> 앱 설치<br>
+              ② 회원 가입<br>
+              ③ 실명 인증<br>
+              ④ 기기 등록
+            </div>
+          </div>
+        </li>
+        <li class="pre-check-item">
+          <div class="pre-check-icon">
+            <svg viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14zm-4.2-5.78v1.75l3.2-2.99L12.8 9v1.7c-3.11.43-4.35 2.56-4.8 4.7 1.11-1.55 2.59-2.18 4.8-2.18z"/></svg>
+          </div>
+          <div class="pre-check-body">
+            <div class="pre-check-label">CIC 모바일 설치</div>
+            <div class="pre-check-desc">시험 및 설문은 모바일로 실시 예정입니다. 사전에 앱 설치를 완료해 주세요.</div>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- 1️⃣ 교육 개요 -->
+    <section id="overview" class="tab-content card">
+      <h2 class="section-title">교육 개요</h2>
+      <ul class="overview-list">
+        <li>
+          <span class="overview-label">과정명</span>
+          <span class="overview-value">PLC제어 기본</span>
+        </li>
+        <li>
+          <span class="overview-label">일정</span>
+          <span class="overview-value">10/21(수) ~ 23(금), 08:00 ~ 17:00<span class="sub-note">※ 1일차(10/21)는 09:00 시작</span></span>
+        </li>
+        <li>
+          <span class="overview-label">장소</span>
+          <span class="overview-value">수원사업장 C3건물 101호 교육장</span>
+        </li>
+      </ul>
+
+      <h3 style="margin-top:14px;font-size:.85rem;font-weight:700;color:var(--primary-dark);">🎯 교육 목표</h3>
+      <div class="goal-cards">
+        <div class="goal-card">
+          <div class="goal-num">01</div>
+          <div class="goal-text">설비제어 S/W인 PLC 구조, 기능, 어드레스 등 시스템 구성 요소 이해하고, 기본 명령어 원리와 다양한 실습을 통해 제어 프로그램 실무 능력 향상</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2️⃣ 일정표 -->
+    <section id="schedule" class="tab-content card">
+      <h2 class="section-title">일정표</h2>
+      <div class="schedule-cards">
+
+        <!-- 10/21 (수) -->
+        <div class="day-card">
+          <div class="day-header">10/21 (수) <span class="day-note">· 1일차 · 09:00~17:00 (7hr)</span></div>
+          <div class="day-body">
+            <div class="time-block">
+              <div class="time-label">09:00<br>~ 12:00</div>
+              <div class="time-topics">
+                <span class="topic">PLC개요 및 구성요소</span>
+                <span class="topic">액추에이터 및 주변기기 동작 이해</span>
+                <span class="topic">설비의 입/출력기기 동작 원리 학습</span>
+                <span class="topic">프로그램 S/W 이해</span>
+                <span class="topic">래더 회로 원리 이해</span>
+              </div>
+            </div>
+            <div class="time-block">
+              <div class="time-label lunch">12:00<br>~ 13:00</div>
+              <div class="lunch-text">중식</div>
+            </div>
+            <div class="time-block">
+              <div class="time-label">13:00<br>~ 17:00</div>
+              <div class="time-topics">
+                <span class="topic">프로그램 S/W 이해</span>
+                <span class="topic">기본 명령어의 이해</span>
+                <span class="topic">기본 명령어 프로그램 실습 1</span>
+                <span class="topic">기본 명령어 프로그램 실습 2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 10/22 (목) -->
+        <div class="day-card">
+          <div class="day-header">10/22 (목) <span class="day-note">· 2일차 · 08:00~17:00 (8hr)</span></div>
+          <div class="day-body">
+            <div class="time-block">
+              <div class="time-label">08:00<br>~ 12:00</div>
+              <div class="time-topics">
+                <span class="topic">프로그램 실습 1</span>
+                <span class="topic">자기유지, 타이머</span>
+                <span class="topic">실린더 제어의 이해</span>
+                <span class="topic">DC 모터 제어의 이해</span>
+              </div>
+            </div>
+            <div class="time-block">
+              <div class="time-label lunch">12:00<br>~ 13:00</div>
+              <div class="lunch-text">중식</div>
+            </div>
+            <div class="time-block">
+              <div class="time-label">13:00<br>~ 17:00</div>
+              <div class="time-topics">
+                <span class="topic">프로그램 실습 2</span>
+                <span class="topic">단동/복동 SOL 이해</span>
+                <span class="topic">실린더 + 컨베이어 모터</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 10/23 (금) -->
+        <div class="day-card">
+          <div class="day-header">10/23 (금) <span class="day-note">· 3일차 · 08:00~17:00 (8hr)</span></div>
+          <div class="day-body">
+            <div class="time-block">
+              <div class="time-label">08:00<br>~ 12:00</div>
+              <div class="time-topics">
+                <span class="topic">프로그램 실습 3</span>
+                <span class="topic">P&P Unit 제어</span>
+                <span class="topic">응용 시퀀스 프로그램 제어 1</span>
+              </div>
+            </div>
+            <div class="time-block">
+              <div class="time-label lunch">12:00<br>~ 13:00</div>
+              <div class="lunch-text">중식</div>
+            </div>
+            <div class="time-block">
+              <div class="time-label">13:00<br>~ 17:00</div>
+              <div class="time-topics">
+                <span class="topic">프로그램 실습 3</span>
+                <span class="topic">응용 시퀀스 프로그램 제어 2</span>
+                <span class="topic" style="color:#b91c1c;font-weight:600;">[실습 평가]</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3️⃣ 근태 안내 -->
+    <section id="attendance" class="tab-content card">
+      <h2 class="section-title">근태 안내</h2>
+
+      <div class="attendance-block">
+        <div class="att-block-title">
+          수원사업장 <span class="tag">HR-Partner</span>
+        </div>
+        <ul class="att-list">
+          <li><strong>"교육"</strong> 근태 입력 필수</li>
+          <li>교육 전후 업무를 하는 경우 <strong>태깅시간 기준</strong>으로 근무시간 인정</li>
+          <li><span class="highlight">※</span> 사업장 내 출퇴근 태깅 필수</li>
+        </ul>
+      </div>
+
+      <div class="attendance-block" style="margin-top:14px;">
+        <div class="att-block-title">
+          세종/부산사업장 <span class="tag">출장 신청</span>
+        </div>
+        <ul class="att-list">
+          <li><strong>출장 신청서</strong> 작성 필수 (아래 필수 항목 참조)</li>
+        </ul>
+        <table class="att-table">
+          <thead>
+            <tr><th>필수 항목</th><th>작성 예시</th></tr>
+          </thead>
+          <tbody>
+            <tr><th>과정명</th><td>PLC 제어 이해 교육 출장</td></tr>
+            <tr><th>출장목적</th><td>[교육] 사내교육(집합)</td></tr>
+            <tr><th>출장유형</th><td>국내</td></tr>
+            <tr><th>교육장소</th><td>수원 사업장 C3건물 101호 교육장</td></tr>
+            <tr><th>출장기간</th><td>당일 이동: '26.10.21 ~ 10.23 (3일간)<span class="sub">전일 이동: '26.10.20 ~ 10.23 (4일간)<br>* 단 10.20은 비근무일수 체크</span></td></tr>
+            <tr><th>출장시간</th><td>08:00 ~ 17:00</td></tr>
+            <tr><th>비근무일수</th><td>교육일이 아닌 일정에 이동하는 경우 체크<span class="sub">Ex) 교육 전일(10.20)</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="footer">PLC제어 기본 · 입과안내</div>
+
+</div>
+
+<script>
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn.active')
+      .forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-content.active')
+      .forEach(el => el.classList.remove('active'));
+
+    btn.classList.add('active');
+    const target = document.getElementById(btn.dataset.target);
+    if (target) target.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
