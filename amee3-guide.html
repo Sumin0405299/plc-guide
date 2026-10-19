@@ -613,11 +613,7 @@ body {
     </button>
     <button class="tab-btn" data-target="exam-detail">
       <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
-      검정 세부시간표
-    </button>
-    <button class="tab-btn" data-target="attendance">
-      <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm0 4a3.5 3.5 0 110 7 3.5 3.5 0 010-7z"/></svg>
-      근태 안내
+      검정안내
     </button>
   </nav>
 
@@ -682,6 +678,40 @@ body {
           <span class="overview-value">수원사업장 C3건물 105호 교육장</span>
         </li>
       </ul>
+
+      <div style="margin-top:14px;padding-top:12px;border-top:2px solid var(--border);">
+        <h2 class="section-title">근태 안내</h2>
+
+        <div class="attendance-block">
+          <div class="att-block-title">
+            수원사업장 <span class="tag">HR-Partner</span>
+          </div>
+          <ul class="att-list">
+            <li><strong>"교육"</strong> 근태 입력 필수</li>
+            <li>10/26(월) 13:00~17:00</li>
+            <li>10/27(화) ~ 29(목) 08:00~17:00</li>
+            <li>10/30(금) 08:00~15:00</li>
+            <li><span class="highlight">※</span> 단, 교육 전후 업무 시 태깅시간 기준으로 근무시간 인정 (사업장 내 출퇴근 태깅 필수)</li>
+          </ul>
+        </div>
+
+        <div class="attendance-block travel-block">
+          <div class="att-block-title">
+            부산/세종사업장 <span class="tag">출장 신청</span>
+          </div>
+          <ul class="att-list">
+            <li>출장시스템에서 신청 (아래 Guide 참고)</li>
+            <li>출장비 지급규정에 의거하여, 개인별 숙소 예약 및 경비처리 진행</li>
+          </ul>
+          <div class="travel-guide">
+            <div class="travel-guide-title">📝 출장 신청 Guide</div>
+            <table class="travel-guide-table">
+              <tr><th>출장 목적/유형</th><td>[교육] 사내교육(집합), 국내</td></tr>
+              <tr><th>출장 기간</th><td>10.26 ~ 30 (5일)</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- 2️⃣ 일정표 -->
@@ -762,7 +792,7 @@ body {
 
     <!-- 3️⃣ 검정 세부시간표 -->
     <section id="exam-detail" class="tab-content card">
-      <h2 class="section-title">검정 세부시간표</h2>
+      <h2 class="section-title">검정안내</h2>
       <div style="font-size:.72rem;color:var(--text-sec);margin-bottom:8px;">10/30 (금) · 수원사업장 C3건물 105호 교육장</div>
       <table class="exam-detail-table">
         <thead>
@@ -795,43 +825,11 @@ body {
         </tbody>
       </table>
       <div class="exam-summary">
-        <strong>📊 평가 비율:</strong> 시퀀스 실기평가 70% + 기계도면 실기평가 30%<br>
-        <strong>⏰ 검정 시간:</strong> 08:00 ~ 15:00 (총 6시간, 중식 1시간 제외)
+        <strong>📢 합격발표:</strong> 11월 첫째주 예정
       </div>
     </section>
 
-    <!-- 4️⃣ 근태 안내 -->
-    <section id="attendance" class="tab-content card">
-      <h2 class="section-title">근태 안내</h2>
 
-      <div class="attendance-block">
-        <div class="att-block-title">
-          수원사업장 <span class="tag">HR-Partner</span>
-        </div>
-        <ul class="att-list">
-          <li><strong>"교육"</strong> 근태 입력 필수</li>
-          <li>교육 전후 업무를 하는 경우 <strong>태깅시간 기준</strong>으로 근무시간 인정</li>
-          <li><span class="highlight">※</span> 사업장 내 출퇴근 태깅 필수</li>
-        </ul>
-      </div>
-
-      <div class="attendance-block travel-block">
-        <div class="att-block-title">
-          부산/세종사업장 <span class="tag">출장 신청</span>
-        </div>
-        <ul class="att-list">
-          <li>출장시스템에서 신청 (아래 Guide 참고)</li>
-          <li>출장비 지급규정에 의거하여, 개인별 숙소 예약 및 경비처리 진행</li>
-        </ul>
-        <div class="travel-guide">
-          <div class="travel-guide-title">📝 출장 신청 Guide</div>
-          <table class="travel-guide-table">
-            <tr><th>출장 목적/유형</th><td>[교육] 사내교육(집합), 국내</td></tr>
-            <tr><th>출장 기간</th><td>10.26 ~ 30 (5일)</td></tr>
-          </table>
-        </div>
-      </div>
-    </section>
 
   </main>
 
